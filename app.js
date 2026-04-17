@@ -128,13 +128,13 @@ function drawCuboid(params) {
     const container = document.getElementById('diagram-container');
     if (!container) return;
 
-    const svgW = 300;
-    const svgH = 250;
+    const svgW = 400;
+    const svgH = 320;
     
     const { w, h, d } = params;
     const maxVal = Math.max(w, h, d);
     
-    const scale = 110 / maxVal; 
+    const scale = 150 / maxVal; 
     const lenW = w * scale;
     const lenH = h * scale;
     const angle = 35 * (Math.PI / 180); // 35 degrees
@@ -174,14 +174,18 @@ function drawCuboid(params) {
     const hidden2 = `<line x1="${pBBL.x}" y1="${pBBL.y}" x2="${pBBR.x}" y2="${pBBR.y}" stroke="${col.stroke}" stroke-width="2" stroke-dasharray="4,4" opacity="0.6"/>`;
     const hidden3 = `<line x1="${pBBL.x}" y1="${pBBL.y}" x2="${pBTL.x}" y2="${pBTL.y}" stroke="${col.stroke}" stroke-width="2" stroke-dasharray="4,4" opacity="0.6"/>`;
 
-    const textW = `<text x="${x0 + lenW/2}" y="${y0 + 22}" font-family="Outfit, sans-serif" font-size="16" fill="#333" font-weight="bold" text-anchor="middle">${w}cm</text>`;
-    const textH = `<text x="${pFBR.x + 8}" y="${y0 - lenH/2}" font-family="Outfit, sans-serif" font-size="16" fill="#333" font-weight="bold" alignment-baseline="middle">${h}cm</text>`;
+    const svgTextFilter = `<filter id="shadow"><feDropShadow dx="1" dy="1" stdDeviation="2" flood-color="rgba(0,0,0,0.8)"/></filter>`;
+    const textStyle = `font-family="Outfit, sans-serif" font-size="22" fill="#ffffff" font-weight="900" filter="url(#shadow)"`;
+
+    const textW = `<text x="${x0 + lenW/2}" y="${y0 + 26}" ${textStyle} text-anchor="middle">${w}cm</text>`;
+    const textH = `<text x="${pFBR.x + 8}" y="${y0 - lenH/2 + 6}" ${textStyle} alignment-baseline="middle">${h}cm</text>`;
     
     const textDx = pFBR.x + dx/2 + 8;
-    const textDy = pFBR.y - dy/2 + 20;
-    const textD = `<text x="${textDx}" y="${textDy}" transform="rotate(-35, ${textDx}, ${textDy})" font-family="Outfit, sans-serif" font-size="16" fill="#333" font-weight="bold" text-anchor="middle">${d}cm</text>`;
+    const textDy = pFBR.y - dy/2 + 24;
+    const textD = `<text x="${textDx}" y="${textDy}" transform="rotate(-35, ${textDx}, ${textDy})" ${textStyle} text-anchor="middle">${d}cm</text>`;
 
     container.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 ${svgW} ${svgH}">
+        <defs>${svgTextFilter}</defs>
         ${hidden1}${hidden2}${hidden3}
         ${polyTop}${polySide}${polyFront}
         ${textW}${textH}${textD}

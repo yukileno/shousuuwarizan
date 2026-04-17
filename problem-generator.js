@@ -12,12 +12,14 @@ window.ProblemGenerator = {
         const isCube = Math.random() < 0.2; // 20%の確率で立方体
         let w, h, d;
         if (isCube) {
-            let side = Math.floor(Math.random() * 9) + 2; // 2〜10cm
+            let side = Math.floor(Math.random() * 3) + 2; // 2〜4cm (5の3乗は125なので2〜4cmに制限)
             w = side; h = side; d = side;
         } else {
-            w = Math.floor(Math.random() * 9) + 3; // 横 3〜11cm
-            h = Math.floor(Math.random() * 8) + 2; // 高さ 2〜9cm
-            d = Math.floor(Math.random() * 8) + 2; // たて 2〜9cm
+            do {
+                w = Math.floor(Math.random() * 9) + 3; // 横 3〜11cm
+                h = Math.floor(Math.random() * 8) + 2; // 高さ 2〜9cm
+                d = Math.floor(Math.random() * 8) + 2; // たて 2〜9cm
+            } while (w * h * d > 100); // 体積が100を越える場合は再生成
         }
 
         let ans = w * h * d;

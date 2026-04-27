@@ -9,7 +9,8 @@ let gameState = {
     timeLeft: 60,
     timerId: null,
     currentProblem: null,
-    userInput: ""
+    userInput: "",
+    isTransitioning: false
 };
 
 // --- DOM Elements ---
@@ -89,7 +90,8 @@ function startGame() {
         timeLeft: 60,
         timerId: null,
         currentProblem: null,
-        userInput: ""
+        userInput: "",
+        isTransitioning: false
     };
     
     dom.currentScoreDisplay.textContent = gameState.score;
@@ -193,6 +195,7 @@ function drawCuboid(params) {
 }
 
 function typeChar(char) {
+    if(gameState.isTransitioning) return;
     // 防止重複小數點 (Prevent multiple decimals)
     if(char === '.' && gameState.userInput.includes('.')) return;
     gameState.userInput += char;
@@ -200,6 +203,7 @@ function typeChar(char) {
 }
 
 function backspace() {
+    if(gameState.isTransitioning) return;
     gameState.userInput = gameState.userInput.slice(0, -1);
     updateInputDisplay();
 }
@@ -209,7 +213,7 @@ function updateInputDisplay() {
 }
 
 function submitAnswer() {
-    if(!gameState.userInput) return; // Empty submission
+    if(!gameState.userInput || gameState.isTransitioning) return; // Empty submission or animating
 
     const isCorrect = (gameState.userInput === gameState.currentProblem.answerText);
     
@@ -218,10 +222,14 @@ function submitAnswer() {
     void dom.answerBox.offsetWidth;
 
     if(isCorrect) {
+        gameState.isTransitioning = true;
         dom.answerBox.classList.add('correct');
         gameState.score += 10; // 10 points per correct answer
         dom.currentScoreDisplay.textContent = gameState.score;
-        setTimeout(nextProblem, 250); // slight delay to show green color
+        setTimeout(() => {
+            nextProblem();
+            gameState.isTransitioning = false;
+        }, 250); // slight delay to show green color
     } else {
         dom.answerBox.classList.add('wrong');
         gameState.userInput = "";

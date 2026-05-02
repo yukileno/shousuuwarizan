@@ -116,9 +116,12 @@ function nextProblem() {
         dom.questionText.textContent = gameState.currentProblem.questionText;
     }
     
-    // Draw the generated cuboid
+    // Draw the generated cuboid or clear diagram
+    const container = document.getElementById('diagram-container');
     if(gameState.currentProblem.params) {
         drawCuboid(gameState.currentProblem.params);
+    } else if (container) {
+        container.innerHTML = ''; // clear previous diagram if any
     }
 
     gameState.userInput = "";

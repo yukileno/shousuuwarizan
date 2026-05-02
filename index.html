@@ -8,12 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=M+PLUS+Rounded+1c:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
-
     <div id="app" class="glass-container">
         <!-- Start Screen -->
         <div id="screen-start" class="screen active">
@@ -27,8 +21,16 @@
         <!-- Game Screen -->
         <div id="screen-game" class="screen">
             <div class="game-header">
-                <div class="timer">残り <span id="time-left">60</span>秒</div>
-                <div class="score-display">スコア: <span id="current-score">0</span></div>
+                <div class="hud-item timer-hud">
+                    <span class="hud-icon">⏱️</span>
+                    <span class="hud-text">TIME:</span>
+                    <span id="time-left" class="hud-value">60</span>
+                </div>
+                <div class="hud-item score-hud">
+                    <span class="hud-icon">🪙</span>
+                    <span class="hud-text">SCORE:</span>
+                    <span id="current-score" class="hud-value">0</span>
+                </div>
             </div>
             
             <div class="problem-board">

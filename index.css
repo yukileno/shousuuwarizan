@@ -242,7 +242,7 @@ button:active { transform: scale(0.95); }
         linear-gradient(90deg, rgba(0, 150, 255, 0.35) 1px, transparent 1px),
         linear-gradient(rgba(0, 150, 255, 0.15) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 150, 255, 0.15) 1px, transparent 1px);
-    background-size: 25px 25px, 25px 25px, 12.5px 12.5px, 12.5px 12.5px;
+    background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;
     background-position: center top;
 }
 

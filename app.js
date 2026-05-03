@@ -326,9 +326,9 @@ async function loadTopPlayersHUD() {
         
         listContainer.innerHTML = '';
         if(data.ranking && data.ranking.length > 0) {
-            // Display top 5
-            const top5 = data.ranking.slice(0, 5);
-            top5.forEach((r, idx) => {
+            // Display top 10
+            const top10 = data.ranking.slice(0, 10);
+            top10.forEach((r, idx) => {
                 const item = document.createElement('div');
                 item.className = 'top-player-item';
                 
@@ -368,7 +368,9 @@ async function showRanking() {
         
         dom.rankingList.innerHTML = '';
         if(data.ranking && data.ranking.length > 0) {
-            data.ranking.forEach((r, idx) => {
+            // Display top 100
+            const top100 = data.ranking.slice(0, 100);
+            top100.forEach((r, idx) => {
                 const item = document.createElement('div');
                 item.className = 'ranking-item';
                 

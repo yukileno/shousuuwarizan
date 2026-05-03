@@ -6,6 +6,7 @@ let gameState = {
     playerName: "",
     score: 0,
     lives: 3,
+    consecutiveCorrects: 0,
     currentProblem: null,
     userInput: "",
     isTransitioning: false
@@ -92,6 +93,7 @@ function startGame() {
         playerName: name,
         score: 0,
         lives: 3,
+        consecutiveCorrects: 0,
         currentProblem: null,
         userInput: "",
         isTransitioning: false
@@ -238,6 +240,17 @@ function submitAnswer() {
         dom.answerBox.classList.add('correct');
         gameState.score += 10; // 10 points per correct answer
         dom.currentScoreDisplay.textContent = gameState.score;
+        
+        // 5問連続正解でライフ全回復
+        gameState.consecutiveCorrects += 1;
+        if (gameState.consecutiveCorrects >= 5) {
+            if (gameState.lives < 3) {
+                gameState.lives = 3;
+                updateLivesDisplay();
+            }
+            gameState.consecutiveCorrects = 0; // リセット
+        }
+        
         setTimeout(() => {
             nextProblem();
             gameState.isTransitioning = false;
@@ -245,6 +258,7 @@ function submitAnswer() {
     } else {
         dom.answerBox.classList.add('wrong');
         gameState.lives -= 1;
+        gameState.consecutiveCorrects = 0; // ミスで連続正解リセット
         updateLivesDisplay();
         
         if (gameState.lives <= 0) {

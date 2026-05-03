@@ -37,6 +37,7 @@ const dom = {
 function init() {
     // Load config from ProblemGenerator
     dom.topicNameDisplay.textContent = window.ProblemGenerator.topicName;
+    document.title = window.ProblemGenerator.topicName; // Set tab title to topic name
     
     // Load saved name
     const savedName = localStorage.getItem('math_player_name');

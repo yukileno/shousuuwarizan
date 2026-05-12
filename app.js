@@ -317,7 +317,7 @@ async function showRanking() {
     }
 
     try {
-        const res = await fetch(`${GAS_API_URL}?action=getTop&sheetName=${APP_SHEET_NAME}&topic=${encodeURIComponent(window.ProblemGenerator.topicName)}&t=${Date.now()}`);
+        const res = await fetch(`${GAS_API_URL}?action=getTop&sheetName=${APP_SHEET_NAME}&topic=${encodeURIComponent(window.ProblemGenerator.topicName)}&limit=100&t=${Date.now()}`);
         const data = await res.json();
         
         dom.rankingList.innerHTML = '';

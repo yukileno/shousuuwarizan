@@ -314,8 +314,8 @@ button:active {
     /* Oak wood planks texture pattern */
     background-color: #c49753;
     background-image: 
-        repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(92, 69, 35, 0.12) 28px, rgba(92, 69, 35, 0.12) 30px),
-        repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(92, 69, 35, 0.12) 28px, rgba(92, 69, 35, 0.12) 30px);
+        repeating-linear-gradient(0deg, transparent, transparent 42px, rgba(92, 69, 35, 0.12) 42px, rgba(92, 69, 35, 0.12) 45px),
+        repeating-linear-gradient(90deg, transparent, transparent 42px, rgba(92, 69, 35, 0.12) 42px, rgba(92, 69, 35, 0.12) 45px);
     box-shadow: 
         inset 4px 4px 0px #e2b373, 
         inset -4px -4px 0px #8c6a38,

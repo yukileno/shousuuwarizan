@@ -8,7 +8,10 @@ let gameState = {
     lives: 3,
     consecutiveCorrects: 0,
     currentProblem: null,
-    userInput: "",
+    userInput: "",      // わりきれるモード用
+    userInputQ: "",     // あまりありモード（商）用
+    userInputR: "",     // あまりありモード（あまり）用
+    activeField: "q",   // "q" (商) または "r" (あまり)
     isTransitioning: false
 };
 
@@ -26,8 +29,18 @@ const dom = {
     livesLeftDisplay: document.getElementById('lives-left'),
     currentScoreDisplay: document.getElementById('current-score'),
     questionText: document.getElementById('question-text'),
+    
+    // 回答枠関連
+    answerBoxNormal: document.getElementById('answer-box-normal'),
+    answerBoxRemain: document.getElementById('answer-box-remain'),
     userInputBox: document.getElementById('user-input'),
-    answerBox: document.querySelector('.answer-box'),
+    userInputQ: document.getElementById('user-input-q'),
+    userInputR: document.getElementById('user-input-r'),
+    slotQ: document.getElementById('slot-q'),
+    slotR: document.getElementById('slot-r'),
+    qCursor: document.querySelector('.q-cursor'),
+    rCursor: document.querySelector('.r-cursor'),
+    
     finalScoreValue: document.getElementById('final-score-value'),
     savingStatus: document.getElementById('saving-status'),
     rankingList: document.getElementById('ranking-list')
@@ -81,14 +94,27 @@ function init() {
     });
     document.querySelector('.btn-delete').addEventListener('click', backspace);
     document.querySelector('.btn-enter').addEventListener('click', submitAnswer);
+    
+    // Focus Toggle Button for remain mode
+    const btnFocusToggle = document.querySelector('.btn-focus-toggle');
+    if (btnFocusToggle) {
+        btnFocusToggle.addEventListener('click', toggleFocus);
+    }
+    
+    // Slot Click Handlers
+    if (dom.slotQ && dom.slotR) {
+        dom.slotQ.addEventListener('click', () => setFocus('q'));
+        dom.slotR.addEventListener('click', () => setFocus('r'));
+    }
 
     // Keyboard Input Handler (For Chromebook / PC)
     window.addEventListener('keydown', (e) => {
         if(screens.game.classList.contains('active')) {
             if(/[0-9\.]/.test(e.key)) {
                 typeChar(e.key);
-            } else if(/^[arp\*]$/i.test(e.key)) {
-                typeChar('あ');
+            } else if(e.key === 'Tab' || /^[arp\*]$/i.test(e.key)) {
+                e.preventDefault();
+                toggleFocus();
             } else if(e.key === 'Backspace') {
                 backspace();
             } else if(e.key === 'Enter') {
@@ -120,6 +146,9 @@ function startGame() {
         consecutiveCorrects: 0,
         currentProblem: null,
         userInput: "",
+        userInputQ: "",
+        userInputR: "",
+        activeField: "q",
         isTransitioning: false
     };
     
@@ -144,11 +173,46 @@ function nextProblem() {
         dom.questionText.textContent = gameState.currentProblem.questionText;
     }
     
+    // Switch input UI based on mode
+    if (window.ProblemGenerator.mode === 'remain') {
+        dom.answerBoxNormal.style.display = 'none';
+        dom.answerBoxRemain.style.display = 'flex';
+    } else {
+        dom.answerBoxNormal.style.display = 'flex';
+        dom.answerBoxRemain.style.display = 'none';
+    }
+    
     // Clear drawing canvas for the new problem
     clearCanvas();
 
     gameState.userInput = "";
+    gameState.userInputQ = "";
+    gameState.userInputR = "";
+    setFocus('q');
     updateInputDisplay();
+}
+
+// --- Focus Management ---
+function setFocus(field) {
+    if (gameState.isTransitioning) return;
+    gameState.activeField = field;
+    if (field === 'q') {
+        dom.slotQ.classList.add('active');
+        dom.slotR.classList.remove('active');
+        dom.qCursor.style.display = 'inline-block';
+        dom.rCursor.style.display = 'none';
+    } else {
+        dom.slotR.classList.add('active');
+        dom.slotQ.classList.remove('active');
+        dom.rCursor.style.display = 'inline-block';
+        dom.qCursor.style.display = 'none';
+    }
+}
+
+function toggleFocus() {
+    if (window.ProblemGenerator.mode !== 'remain' || gameState.isTransitioning) return;
+    const nextField = (gameState.activeField === 'q') ? 'r' : 'q';
+    setFocus(nextField);
 }
 
 // --- Canvas Drawing Logic ---
@@ -234,36 +298,76 @@ function clearCanvas() {
 
 function typeChar(char) {
     if(gameState.isTransitioning) return;
-    // 防止重複小數點 (Prevent multiple decimals)
-    if(char === '.' && gameState.userInput.includes('.')) return;
-    // 重複した「あ」の入力を防止
-    if(char === 'あ' && gameState.userInput.includes('あ')) return;
-    gameState.userInput += char;
+    
+    if (window.ProblemGenerator.mode === 'remain') {
+        // あまりありモード（商とあまりの振り分け）
+        if (gameState.activeField === 'q') {
+            if(char === '.' && gameState.userInputQ.includes('.')) return;
+            gameState.userInputQ += char;
+        } else {
+            if(char === '.' && gameState.userInputR.includes('.')) return;
+            gameState.userInputR += char;
+        }
+    } else {
+        // わりきれるモード
+        if(char === '.' && gameState.userInput.includes('.')) return;
+        gameState.userInput += char;
+    }
     updateInputDisplay();
 }
 
 function backspace() {
     if(gameState.isTransitioning) return;
-    gameState.userInput = gameState.userInput.slice(0, -1);
+    
+    if (window.ProblemGenerator.mode === 'remain') {
+        if (gameState.activeField === 'q') {
+            gameState.userInputQ = gameState.userInputQ.slice(0, -1);
+        } else {
+            gameState.userInputR = gameState.userInputR.slice(0, -1);
+        }
+    } else {
+        gameState.userInput = gameState.userInput.slice(0, -1);
+    }
     updateInputDisplay();
 }
 
 function updateInputDisplay() {
-    dom.userInputBox.textContent = gameState.userInput;
+    if (window.ProblemGenerator.mode === 'remain') {
+        dom.userInputQ.textContent = gameState.userInputQ;
+        dom.userInputR.textContent = gameState.userInputR;
+    } else {
+        dom.userInputBox.textContent = gameState.userInput;
+    }
 }
 
 function submitAnswer() {
-    if(!gameState.userInput || gameState.isTransitioning) return; // Empty submission or animating
-
-    const isCorrect = (gameState.userInput === gameState.currentProblem.answerText);
+    if (gameState.isTransitioning) return;
     
-    dom.answerBox.classList.remove('correct', 'wrong');
+    let isCorrect = false;
+    const activeBox = (window.ProblemGenerator.mode === 'remain') ? dom.answerBoxRemain : dom.answerBoxNormal;
+    
+    if (window.ProblemGenerator.mode === 'remain') {
+        if (!gameState.userInputQ || !gameState.userInputR) return; // 両方入力されていない場合は無視
+        
+        // 答えは「商ああまり」の形式（例: 3あ0.2）
+        const ansParts = gameState.currentProblem.answerText.split('あ');
+        if (ansParts.length === 2) {
+            const expectedQ = ansParts[0];
+            const expectedR = ansParts[1];
+            isCorrect = (gameState.userInputQ === expectedQ && gameState.userInputR === expectedR);
+        }
+    } else {
+        if (!gameState.userInput) return;
+        isCorrect = (gameState.userInput === gameState.currentProblem.answerText);
+    }
+    
+    activeBox.classList.remove('correct', 'wrong');
     // Force reflow
-    void dom.answerBox.offsetWidth;
+    void activeBox.offsetWidth;
 
     if(isCorrect) {
         gameState.isTransitioning = true;
-        dom.answerBox.classList.add('correct');
+        activeBox.classList.add('correct');
         const scoreGain = (window.ProblemGenerator.mode === 'remain') ? 20 : 10;
         gameState.score += scoreGain; // 10 or 20 points per correct answer
         dom.currentScoreDisplay.textContent = gameState.score;
@@ -281,20 +385,31 @@ function submitAnswer() {
         setTimeout(() => {
             nextProblem();
             gameState.isTransitioning = false;
+            activeBox.classList.remove('correct');
         }, 250); // slight delay to show green color
     } else {
-        dom.answerBox.classList.add('wrong');
+        activeBox.classList.add('wrong');
         gameState.lives -= 1;
         gameState.consecutiveCorrects = 0; // ミスで連続正解リセット
         updateLivesDisplay();
         
         if (gameState.lives <= 0) {
             setTimeout(() => {
+                activeBox.classList.remove('wrong');
                 endGame();
             }, 300);
         } else {
-            gameState.userInput = "";
+            if (window.ProblemGenerator.mode === 'remain') {
+                gameState.userInputQ = "";
+                gameState.userInputR = "";
+                setFocus('q');
+            } else {
+                gameState.userInput = "";
+            }
             updateInputDisplay();
+            setTimeout(() => {
+                activeBox.classList.remove('wrong');
+            }, 300);
         }
     }
 }

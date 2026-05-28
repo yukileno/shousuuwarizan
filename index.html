@@ -45,9 +45,20 @@
                 <div class="question-container">
                     <div id="question-text" class="question">計算しましょう。</div>
                     <div class="equals-sign">＝</div>
-                    <div class="answer-box">
+                    <div class="answer-box" id="answer-box-normal">
                         <span id="user-input" class="user-input-text"></span>
                         <span class="cursor"></span>
+                    </div>
+                    <div class="answer-box remain-box" id="answer-box-remain" style="display: none;">
+                        <div class="input-slot active" id="slot-q">
+                            <span id="user-input-q" class="user-input-text"></span>
+                            <span class="cursor q-cursor"></span>
+                        </div>
+                        <span class="remain-label">あまり</span>
+                        <div class="input-slot" id="slot-r">
+                            <span id="user-input-r" class="user-input-text"></span>
+                            <span class="cursor r-cursor" style="display: none;"></span>
+                        </div>
                     </div>
                 </div>
                 <div id="calc-area">
@@ -61,7 +72,7 @@
                 <button class="num-key">7</button><button class="num-key">8</button><button class="num-key">9</button>
                 <button class="num-key">4</button><button class="num-key">5</button><button class="num-key">6</button>
                 <button class="num-key">1</button><button class="num-key">2</button><button class="num-key">3</button>
-                <button class="num-key">0</button><button class="num-key dot-key">.</button><button class="num-key btn-remain">あ</button>
+                <button class="num-key">0</button><button class="num-key dot-key">.</button><button class="cmd-key btn-focus-toggle">あまり</button>
                 <button class="cmd-key btn-delete" style="grid-column: span 1;">消す</button>
                 <button class="cmd-key btn-enter" style="grid-column: span 2;">こたえる！</button>
             </div>

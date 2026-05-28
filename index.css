@@ -403,6 +403,44 @@ button:active {
     animation: mcShake 0.2s ease-in-out;
 }
 
+/* Remain Mode 2-Slot Styles */
+.answer-box.remain-box {
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    min-width: 220px;
+}
+.input-slot {
+    background: rgba(0, 0, 0, 0.6);
+    border: 4px solid #555555;
+    border-radius: 0;
+    min-width: 80px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: inset 4px 4px 0px #000000;
+    cursor: pointer;
+    font-size: clamp(1.3rem, 4vw, 1.7rem);
+    color: #ffffff;
+    text-shadow: 2px 2px 0px #1f1f1f;
+}
+.input-slot.active {
+    border-color: #ffffff; /* Glow white on focus */
+}
+.remain-label {
+    font-size: 1.1rem;
+    color: #ffffff;
+    text-shadow: 2px 2px 0px #1f1f1f;
+    font-weight: bold;
+}
+
 .cursor {
     display: inline-block;
     width: 3px;

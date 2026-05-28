@@ -7,8 +7,15 @@ window.ProblemGenerator = {
     // 先生に表示する「今日のドリル」のタイトル
     topicName: "小数の割り算",
 
+    // 現在のモード ("normal": わりきれる, "remain": あまりあり)
+    mode: "normal",
+
     // 問題を生成して { questionText, answerText, params } を返す関数
     generate: function() {
+        if (this.mode === "remain") {
+            return this.generateRemainProblem();
+        }
+
         const cleanFormat = (val, dec) => {
             let str = val.toFixed(dec);
             if (str.indexOf('.') !== -1) {
@@ -96,6 +103,79 @@ window.ProblemGenerator = {
         return {
             questionText: "2.02 ÷ 0.8",
             answerText: "2.525",
+            params: null
+        };
+    },
+
+    // あまりが出る割り算問題を生成する関数
+    generateRemainProblem: function() {
+        const cleanFormat = (val, dec) => {
+            let str = val.toFixed(dec);
+            if (str.indexOf('.') !== -1) {
+                str = str.replace(/0+$/, '').replace(/\.$/, '');
+            }
+            return str;
+        };
+
+        let attempts = 0;
+        while (attempts < 1000) {
+            attempts++;
+            // C (被除数) と B (除数) を生成
+            // C: 小数第一位 (1.1 - 19.9) または 小数第二位 (0.11 - 1.99)
+            // B: 整数 (2 - 9) または 小数第一位 (0.2 - 1.5)
+            let decC = Math.random() < 0.5 ? 1 : 2;
+            let decB = Math.random() < 0.5 ? 0 : 1;
+
+            let intC, intB;
+            if (decC === 1) {
+                intC = Math.floor(Math.random() * 189) + 11; // 11-199 (1.1 - 19.9)
+            } else {
+                intC = Math.floor(Math.random() * 189) + 11; // 11-199 (0.11 - 1.99)
+            }
+
+            if (decB === 0) {
+                intB = Math.floor(Math.random() * 8) + 2; // 2-9
+            } else {
+                intB = Math.floor(Math.random() * 14) + 2; // 2-15 (0.2-1.5)
+                while (intB % 10 === 0) intB = Math.floor(Math.random() * 14) + 2;
+            }
+
+            // 小数桁数を最大のものに合わせる
+            const maxDec = Math.max(decC, decB);
+            const scaleC = Math.pow(10, maxDec - decC);
+            const scaleB = Math.pow(10, maxDec - decB);
+
+            const alignC = intC * scaleC;
+            const alignB = intB * scaleB;
+
+            // 商 A (整数)
+            const A = Math.floor(alignC / alignB);
+            // あまりの整数値 (被除数と同じスケール)
+            const alignR = alignC - A * alignB;
+
+            if (alignR === 0 || A === 0) continue; // 割り切れるもの、または商が0になるものは避ける
+
+            // あまり R を小数に戻す（被除数 C と同じ小数点位置になる）
+            const valR = alignR / Math.pow(10, maxDec);
+            const valC = intC / Math.pow(10, decC);
+            const valB = intB / Math.pow(10, decB);
+
+            const strC = cleanFormat(valC, decC);
+            const strB = cleanFormat(valB, decB);
+            const strR = cleanFormat(valR, maxDec);
+            const strA = A.toString();
+
+            return {
+                questionText: `${strC} ÷ ${strB} (商は整数)`,
+                answerText: `${strA}あ${strR}`,
+                params: null
+            };
+        }
+        
+        // フォールバック
+        return {
+            questionText: "2.3 ÷ 0.7 (商は整数)",
+            answerText: "3あ0.2",
             params: null
         };
     }

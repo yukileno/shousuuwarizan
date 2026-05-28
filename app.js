@@ -43,6 +43,30 @@ function init() {
     const savedName = localStorage.getItem('math_player_name');
     if(savedName) dom.playerNameInput.value = savedName;
 
+    // Mode Selector Logic
+    const modeBtns = {
+        normal: document.getElementById('btn-mode-normal'),
+        remain: document.getElementById('btn-mode-remain')
+    };
+    const updateMode = (selectedMode) => {
+        window.ProblemGenerator.mode = selectedMode;
+        if (selectedMode === 'remain') {
+            window.ProblemGenerator.topicName = "小数の割り算（あまりあり）";
+            modeBtns.remain.classList.add('active');
+            modeBtns.normal.classList.remove('active');
+        } else {
+            window.ProblemGenerator.topicName = "小数の割り算";
+            modeBtns.normal.classList.add('active');
+            modeBtns.remain.classList.remove('active');
+        }
+        dom.topicNameDisplay.textContent = window.ProblemGenerator.topicName;
+        document.title = window.ProblemGenerator.topicName;
+    };
+    if (modeBtns.normal && modeBtns.remain) {
+        modeBtns.normal.addEventListener('click', () => updateMode('normal'));
+        modeBtns.remain.addEventListener('click', () => updateMode('remain'));
+    }
+    
     // Attach Handlers
     document.getElementById('btn-start').addEventListener('click', startGame);
     document.getElementById('btn-show-ranking').addEventListener('click', showRanking);
@@ -63,6 +87,8 @@ function init() {
         if(screens.game.classList.contains('active')) {
             if(/[0-9\.]/.test(e.key)) {
                 typeChar(e.key);
+            } else if(/^[arp\*]$/i.test(e.key)) {
+                typeChar('あ');
             } else if(e.key === 'Backspace') {
                 backspace();
             } else if(e.key === 'Enter') {
@@ -210,6 +236,8 @@ function typeChar(char) {
     if(gameState.isTransitioning) return;
     // 防止重複小數點 (Prevent multiple decimals)
     if(char === '.' && gameState.userInput.includes('.')) return;
+    // 重複した「あ」の入力を防止
+    if(char === 'あ' && gameState.userInput.includes('あ')) return;
     gameState.userInput += char;
     updateInputDisplay();
 }
@@ -236,7 +264,8 @@ function submitAnswer() {
     if(isCorrect) {
         gameState.isTransitioning = true;
         dom.answerBox.classList.add('correct');
-        gameState.score += 10; // 10 points per correct answer
+        const scoreGain = (window.ProblemGenerator.mode === 'remain') ? 20 : 10;
+        gameState.score += scoreGain; // 10 or 20 points per correct answer
         dom.currentScoreDisplay.textContent = gameState.score;
         
         // 5問連続正解でライフ全回復

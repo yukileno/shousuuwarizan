@@ -14,6 +14,10 @@
         <div id="screen-start" class="screen active">
             <h1 class="logo">郡中っ子<br><span>計算グランプリ</span></h1>
             <p class="description">今日のお題: <span id="topic-name">小数の割り算</span></p>
+            <div class="mode-select">
+                <button id="btn-mode-normal" class="mode-btn active">わりきれる (10点)</button>
+                <button id="btn-mode-remain" class="mode-btn">あまりあり (20点)</button>
+            </div>
             <input type="text" id="player-name" placeholder="なまえをいれてね" autocomplete="off" />
             <button id="btn-start" class="primary-btn">スタート！</button>
             <button id="btn-show-ranking" class="secondary-btn">ランキングをみる</button>
@@ -57,8 +61,9 @@
                 <button class="num-key">7</button><button class="num-key">8</button><button class="num-key">9</button>
                 <button class="num-key">4</button><button class="num-key">5</button><button class="num-key">6</button>
                 <button class="num-key">1</button><button class="num-key">2</button><button class="num-key">3</button>
-                <button class="num-key">0</button><button class="num-key dot-key">.</button><button class="cmd-key btn-delete">消す</button>
-                <button class="cmd-key btn-enter" style="grid-column: span 3;">こたえる！</button>
+                <button class="num-key">0</button><button class="num-key dot-key">.</button><button class="num-key btn-remain">あ</button>
+                <button class="cmd-key btn-delete" style="grid-column: span 1;">消す</button>
+                <button class="cmd-key btn-enter" style="grid-column: span 2;">こたえる！</button>
             </div>
         </div>
 

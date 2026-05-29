@@ -383,8 +383,8 @@ function submitAnswer() {
         }
         
         setTimeout(() => {
-            nextProblem();
             gameState.isTransitioning = false;
+            nextProblem();
             activeBox.classList.remove('correct');
         }, 250); // slight delay to show green color
     } else {

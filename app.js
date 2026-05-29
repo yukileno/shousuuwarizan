@@ -466,24 +466,30 @@ async function showRanking() {
         
         dom.rankingList.innerHTML = '';
         if(data.ranking && data.ranking.length > 0) {
-            // Display top 100
-            const top100 = data.ranking.slice(0, 100);
-            top100.forEach((r, idx) => {
-                const item = document.createElement('div');
-                item.className = 'ranking-item';
-                
-                let rankClass = '';
-                if(idx === 0) rankClass = 'rank-1';
-                else if(idx === 1) rankClass = 'rank-2';
-                else if(idx === 2) rankClass = 'rank-3';
+            // 0点の人はランキングに載せない
+            const filteredRanking = data.ranking.filter(r => parseInt(r.score, 10) > 0);
+            
+            if (filteredRanking.length > 0) {
+                const top100 = filteredRanking.slice(0, 100);
+                top100.forEach((r, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'ranking-item';
+                    
+                    let rankClass = '';
+                    if(idx === 0) rankClass = 'rank-1';
+                    else if(idx === 1) rankClass = 'rank-2';
+                    else if(idx === 2) rankClass = 'rank-3';
 
-                item.innerHTML = `
-                    <span class="${rankClass}">${idx + 1}位</span>
-                    <span>${r.name}</span>
-                    <span style="color:var(--primary); font-weight:bold;">${r.score}</span>
-                `;
-                dom.rankingList.appendChild(item);
-            });
+                    item.innerHTML = `
+                        <span class="${rankClass}">${idx + 1}位</span>
+                        <span>${r.name}</span>
+                        <span style="color:var(--primary); font-weight:bold;">${r.score}</span>
+                    `;
+                    dom.rankingList.appendChild(item);
+                });
+            } else {
+                dom.rankingList.innerHTML = '<div style="text-align:center; margin-top: 20px;">まだデータがありません。一番乗りを目指そう！</div>';
+            }
         } else {
             dom.rankingList.innerHTML = '<div style="text-align:center; margin-top: 20px;">まだデータがありません。一番乗りを目指そう！</div>';
         }

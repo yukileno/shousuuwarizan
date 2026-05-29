@@ -123,14 +123,18 @@ body {
 
 .mode-select {
     display: flex;
-    gap: 8px;
-    width: 80%;
+    gap: 6px;
+    width: 90%;
     margin-bottom: 25px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 4px solid #4a4a4a;
+    padding: 6px;
+    box-shadow: inset 4px 4px 0px #1f1f1f;
 }
 .mode-btn {
     flex: 1;
-    font-size: 0.95rem;
-    padding: 10px 5px;
+    font-size: 0.75rem;
+    padding: 8px 2px;
     margin-bottom: 0;
     background: #737373;
     border-color: #9e9e9e #3c3c3c #3c3c3c #9e9e9e;
@@ -142,13 +146,13 @@ body {
     color: #ffff55;
 }
 .mode-btn.active {
-    background: #5b8731;
-    border-color: #7eb343 #2a4d13 #2a4d13 #7eb343;
-    color: #ffffff;
-    text-shadow: 1px 1px 0px #1a300c;
+    background: #4a5f7d; /* Lapis Lazuli blue */
+    border-color: #6d84a3 #2b394d #2b394d #6d84a3;
+    color: #ffff55;
+    text-shadow: 1px 1px 0px #1c2635;
 }
 .mode-btn.active:hover {
-    background: #6a9c39;
+    background: #576d8c;
     color: #ffff55;
 }
 .mode-btn:active, .mode-btn.active:active {

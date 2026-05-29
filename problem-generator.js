@@ -15,6 +15,9 @@ window.ProblemGenerator = {
         if (this.mode === "remain") {
             return this.generateRemainProblem();
         }
+        if (this.mode === "approx") {
+            return this.generateApproxProblem();
+        }
 
         const cleanFormat = (val, dec) => {
             let str = val.toFixed(dec);
@@ -176,6 +179,78 @@ window.ProblemGenerator = {
         return {
             questionText: "2.3 ÷ 0.7 (商は整数)",
             answerText: "3あ0.2",
+            params: null
+        };
+    },
+
+    // 割り切れない割り算問題を生成し、商を四捨五入して1/10の位までの概数で表す
+    generateApproxProblem: function() {
+        const cleanFormat = (val, dec) => {
+            let str = val.toFixed(dec);
+            if (str.indexOf('.') !== -1) {
+                str = str.replace(/0+$/, '').replace(/\.$/, '');
+            }
+            return str;
+        };
+
+        let attempts = 0;
+        while (attempts < 1000) {
+            attempts++;
+            
+            // 被除数 C: 1.1 - 9.9 (小数第一位) または 0.11 - 1.99 (小数第二位) 
+            let decC = Math.random() < 0.6 ? 1 : 2;
+            let valC = 0;
+            if (decC === 1) {
+                valC = (Math.floor(Math.random() * 89) + 11) / 10;
+            } else {
+                valC = (Math.floor(Math.random() * 189) + 11) / 100;
+            }
+            
+            // 除数 B: 3, 6, 7, 8, 9 または 小数 0.3, 0.6, 0.7, 0.9 (割り切れなくなりやすい値)
+            let valB = 0;
+            const bIntList = [3, 6, 7, 8, 9];
+            const bDecList = [0.3, 0.6, 0.7, 0.9];
+            if (Math.random() < 0.6) {
+                valB = bIntList[Math.floor(Math.random() * bIntList.length)];
+            } else {
+                valB = bDecList[Math.floor(Math.random() * bDecList.length)];
+            }
+            
+            // 商の正確な値
+            const rawQuotient = valC / valB;
+            
+            // 小数第二位で割り切れる（または小数第一位で終わる）ものは除外する
+            // 1/10の位（小数第一位）までの概数を四捨五入で求める問題のため、小数第二位以下も数値が続く（割り切れない）必要がある。
+            const scaled = rawQuotient * 100;
+            if (Math.abs(scaled - Math.round(scaled)) < 1e-9) {
+                continue;
+            }
+            
+            // 商を四捨五入して小数第一位までにする
+            const ansVal = Math.round(rawQuotient * 10) / 10;
+            
+            // スコアが極端に小さい、あるいは0.0になるものは避ける
+            if (ansVal < 0.1) {
+                continue;
+            }
+            
+            const strC = cleanFormat(valC, decC);
+            // 除数が整数のときは小数点をつけず、小数のときは小数表示にする
+            const strB = valB % 1 === 0 ? valB.toString() : cleanFormat(valB, 1);
+            
+            const answerText = ansVal.toFixed(1); // 例: "1.7", "2.0"
+            
+            return {
+                questionText: `${strC} ÷ ${strB} (四捨五入して1/10の位まで)`,
+                answerText: answerText,
+                params: null
+            };
+        }
+        
+        // フォールバック
+        return {
+            questionText: "5.5 ÷ 3 (四捨五入して1/10の位まで)",
+            answerText: "1.8",
             params: null
         };
     }

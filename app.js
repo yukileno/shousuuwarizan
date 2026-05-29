@@ -59,18 +59,26 @@ function init() {
     // Mode Selector Logic
     const modeBtns = {
         normal: document.getElementById('btn-mode-normal'),
-        remain: document.getElementById('btn-mode-remain')
+        remain: document.getElementById('btn-mode-remain'),
+        approx: document.getElementById('btn-mode-approx')
     };
     const updateMode = (selectedMode) => {
         window.ProblemGenerator.mode = selectedMode;
+        
+        // Remove active class from all
+        Object.values(modeBtns).forEach(btn => {
+            if (btn) btn.classList.remove('active');
+        });
+        
         if (selectedMode === 'remain') {
             window.ProblemGenerator.topicName = "小数の割り算（あまりあり）";
-            modeBtns.remain.classList.add('active');
-            modeBtns.normal.classList.remove('active');
+            if (modeBtns.remain) modeBtns.remain.classList.add('active');
+        } else if (selectedMode === 'approx') {
+            window.ProblemGenerator.topicName = "小数の割り算（概数）";
+            if (modeBtns.approx) modeBtns.approx.classList.add('active');
         } else {
             window.ProblemGenerator.topicName = "小数の割り算";
-            modeBtns.normal.classList.add('active');
-            modeBtns.remain.classList.remove('active');
+            if (modeBtns.normal) modeBtns.normal.classList.add('active');
         }
         dom.topicNameDisplay.textContent = window.ProblemGenerator.topicName;
         document.title = window.ProblemGenerator.topicName;
@@ -78,6 +86,9 @@ function init() {
     if (modeBtns.normal && modeBtns.remain) {
         modeBtns.normal.addEventListener('click', () => updateMode('normal'));
         modeBtns.remain.addEventListener('click', () => updateMode('remain'));
+        if (modeBtns.approx) {
+            modeBtns.approx.addEventListener('click', () => updateMode('approx'));
+        }
     }
     
     // Attach Handlers
@@ -368,7 +379,7 @@ function submitAnswer() {
     if(isCorrect) {
         gameState.isTransitioning = true;
         activeBox.classList.add('correct');
-        const scoreGain = (window.ProblemGenerator.mode === 'remain') ? 20 : 10;
+        const scoreGain = (window.ProblemGenerator.mode === 'normal') ? 10 : 20; // 10 points for normal, 20 for remain/approx
         gameState.score += scoreGain; // 10 or 20 points per correct answer
         dom.currentScoreDisplay.textContent = gameState.score;
         

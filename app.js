@@ -365,11 +365,13 @@ function submitAnswer() {
         if (ansParts.length === 2) {
             const expectedQ = ansParts[0];
             const expectedR = ansParts[1];
-            isCorrect = (gameState.userInputQ === expectedQ && gameState.userInputR === expectedR);
+            const matchQ = (gameState.userInputQ === expectedQ) || (Number(gameState.userInputQ) === Number(expectedQ));
+            const matchR = (gameState.userInputR === expectedR) || (Number(gameState.userInputR) === Number(expectedR));
+            isCorrect = (matchQ && matchR);
         }
     } else {
         if (!gameState.userInput) return;
-        isCorrect = (gameState.userInput === gameState.currentProblem.answerText);
+        isCorrect = (gameState.userInput === gameState.currentProblem.answerText) || (Number(gameState.userInput) === Number(gameState.currentProblem.answerText));
     }
     
     activeBox.classList.remove('correct', 'wrong');

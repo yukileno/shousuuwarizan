@@ -107,7 +107,6 @@ function init() {
         checkResumeData();
         switchScreen('start');
     });
-    document.getElementById('btn-save-quit').addEventListener('click', endGame);
 
     // Numpad Handlers
     document.querySelectorAll('.num-key').forEach(btn => {
